@@ -1,0 +1,25 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background-image: url('D:\project\snake_ladder_game\snake_ladder_game\public\6191052.jpg');  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}   
+
+#root{
+    max-width: 100vw;
+    min-height: 100Vh;
+    display: flex   ;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+
+    text-align: center;    
+}
+
+.main-container{
+    display: flex;
+}

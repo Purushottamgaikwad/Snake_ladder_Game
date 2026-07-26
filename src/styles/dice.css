@@ -1,0 +1,36 @@
+button {
+    padding: 14px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+    border: none;
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+img{
+    user-select:none;
+}

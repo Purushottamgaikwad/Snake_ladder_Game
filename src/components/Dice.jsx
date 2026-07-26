@@ -1,0 +1,71 @@
+import { useEffect, useState } from 'react';
+import {motion} from "framer-motion";
+import "../styles/dice.css";
+
+import dice1 from "../assets/dice-six-faces-one.svg"
+import dice2 from "../assets/dice-six-faces-two.svg"
+import dice3 from "../assets/dice-six-faces-three.svg"
+import dice4 from "../assets/dice-six-faces-four.svg"
+import dice5 from "../assets/dice-six-faces-five.svg"
+import dice6 from "../assets/dice-six-faces-six.svg"
+
+
+
+function Dice({onRoll}){
+
+    const [diceImage, setDiceImage] = useState(null);
+    const images = [dice1,dice2,dice3,dice4,dice5,dice6];
+
+    const [dice, setDice] = useState(1);
+    const [rolling, setRolling] = useState(false);
+
+    function rollDice() {
+
+        if (rolling) return;
+        setRolling(true);
+
+        let count = 0;
+
+        const interval = setInterval(() => {
+            setDice(Math.floor(Math.random() * 6) + 1);
+            count++;
+            if (count === 10) {
+                clearInterval(interval);
+                const final = Math.floor(Math.random() * 6) + 1;
+                setDice(final);
+                setRolling(false);
+                onRoll(final);
+                console.log("Dice :", final);
+            }
+        }, 100);
+
+    }
+
+    return (
+
+        <div>
+            <motion.img
+                src={images[dice - 1]}
+                animate={{
+                    rotate: rolling ? 720 : 0,
+                    scale: rolling ? 1.2 : 1
+                }}
+                transition={{
+                    duration: 0.5
+                }}
+                width={90}
+            />
+
+            <br />
+
+            <button onClick={rollDice}  disabled={rolling}  >
+                {rolling ? "Rolling..." : "Roll Dice"}
+            </button>
+
+        </div>
+
+    );
+
+}
+
+export default Dice;
