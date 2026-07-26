@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import Dice from './Dice.jsx';
 import '../styles/board.css'
 import Player from './Player.jsx'
+import moveSoundEffect from "../assets/move.mp3"; 
+import winSoundEffect from "../assets/win.mp3"; 
 
-const moveSound = new Audio('/sounds/token-move.mp3');
-const winSound = new Audio('/sounds/win.mp3');
 
 const ladders = new Array(101).fill(-1);
 ladders[2] = 38; ladders[7] = 14; ladders[8] = 31; ladders[15] = 26;
@@ -16,6 +16,7 @@ snakes[16] = 6; snakes[49] = 11; snakes[46] = 25; snakes[62] = 19;
 snakes[64] = 60; snakes[74] = 53; snakes[92] = 88; snakes[95] = 75; snakes[99] = 80;
 
 function Board(){
+
     const [board, setBoard] = useState([]);
     const [diceValue, setDiceValue] = useState(null);
     const [diceRollCount, setDiceRollCount] = useState(0);
@@ -25,6 +26,9 @@ function Board(){
         { id: 1, name: "Player1", position: 0, color: "red" },
         { id: 2, name: "Player2", position: 0, color: "blue" }
     ]);
+    const [moveSound] = useState(() => new Audio(moveSoundEffect));
+    const [winSound] = useState(() => new Audio(winSoundEffect));
+    
 
     const array = Array.from({ length: 100 }, (_, i) => 100 - i);
 
@@ -42,7 +46,7 @@ function Board(){
                 if (newPosition > 100) newPosition = player.position;
 
                 if (newPosition === 100) {
-                    justWon = { ...player, position: 100 }; // <-- fix: आता properly set होतं
+                    justWon = { ...player, position: 100 }; 
                     return { ...player, position: 100 };
                 }
 
@@ -100,17 +104,16 @@ function Board(){
         setDiceRollCount(prev => prev + 1);
     };
 
-    // % based — कोणत्याही board size वर (mobile/desktop) proportionately बरोबर राहतं
     function getCoordinates(position) {
         if (position === 0) {
-            return { left: '1%', top: '91%' }; // start, board च्या बाहेर pahiल्या cell जवळ
+            return { left: '1%', top: '91%' }; 
         }
 
         const row = Math.floor((position - 1) / 10);
         let col = (position - 1) % 10;
         if (row % 2 === 1) col = 9 - col;
 
-        const visualRow = 9 - row; // row 0 (1-10) board च्या तळाशी दिसतो
+        const visualRow = 9 - row; 
 
         return {
             left: `${col * 10 + 1}%`,
@@ -120,13 +123,17 @@ function Board(){
 
     return (
         <>
+                    <Player playerPosition={playerPosition} currentPlayer={currentPlayerIndex} />
+
             <div className='main-container'>
+              
+
+
                 <div className='board-container'>
                     {board.map((num) => (
                         <div className='block' key={num}> {num} </div>
                     ))}
 
-                    {/* Fix: tokens आता board-container च्या आतच आहेत */}
                     {playerPosition.map((player) => {
                         const point = getCoordinates(player.position);
                         return (
@@ -147,13 +154,11 @@ function Board(){
                         );
                     })}
                 </div>
-
-                <Dice onRoll={handleDiceRoll} />
+  <Dice onRoll={handleDiceRoll} />
             </div>
 
-            <Player playerPosition={playerPosition} currentPlayer={currentPlayerIndex} />
 
-            {winner && <h2 className="winner-banner">🎉 {winner.name} Wins!</h2>}
+            {/* {winner && <h2 className="winner-banner">🎉 {winner.name} Wins!</h2>} */}
         </>
     );
 }

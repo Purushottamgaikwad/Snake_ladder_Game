@@ -1,19 +1,25 @@
 import { parseCSSVariable } from "framer-motion";
 import { useEffect,useState } from "react";
+import winSoundEffect from "../assets/win.mp3"; 
+
 import '../styles/player.css'
 
 function Player({ board,playerPosition ,currentPlayer}) {
 
     const [winner, setWinner] = useState(null);
+    const [winSound] = useState(() => new Audio(winSoundEffect));
 
     useEffect(()=>{
         if(playerPosition[0].position === 100){
-            setWinner("Player 1 is Winner 👑")
-            console.log(winner)
+            setWinner("RED IS WINNER 👑")
+            // console.log(winner)
+            winSound.play();
         }else if (playerPosition[1].position === 100) {
-            setWinner("Player 2 is Winner 👑")
+            setWinner("BLUE IS WINNER 👑")
+            winSound.play();
         }
 
+        
 
     })
 
@@ -21,14 +27,36 @@ function Player({ board,playerPosition ,currentPlayer}) {
     
     return (
         <>
-        {winner?<h1>{winner}</h1>:
-            <h1>
-               Turn of {playerPosition[currentPlayer].name}
-                <br />
-                {playerPosition[0].color} -- {playerPosition[0].position}
-                <br />
-                {playerPosition[1].color} -- {playerPosition[1].position}
-            </h1>
+        {winner?<h1 className="winner-banner">{winner}</h1>:
+     <div className="dashboard">
+    <h2 className="dashboard-heading">🎲 Game Dashboard 🎲</h2>
+
+    <div className="turn-box">
+        Turn of
+        <span
+            className="turn-player"
+            style={{ color: playerPosition[currentPlayer].color }}
+        >
+            {playerPosition[currentPlayer].color}
+        </span>
+    </div>
+
+    <div className="score-board">
+        <div className="player-box red-player">
+            <span className="player-name">{playerPosition[0].color}</span>
+            <span className="player-position">
+                Position: {playerPosition[0].position}
+            </span>
+        </div>
+
+        <div className="player-box blue-player">
+            <span className="player-name">{playerPosition[1].color}</span>
+            <span className="player-position">
+                Position: {playerPosition[1].position}
+            </span>
+        </div>
+    </div>
+</div>
             
             }
 

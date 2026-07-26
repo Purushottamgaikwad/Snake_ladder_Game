@@ -1,21 +1,19 @@
 import { useState } from 'react'
 
-import './App.css'
+import './styles/App.css'
 import Board from './components/Board'
-import SnakeLadderBoard from './components/snake-ladder-zigzag'
 import Dice from './components/Dice'
+import { color } from 'framer-motion'
 
 function App() {
 
   return (
     <>  
     
-      <h1>hello Games</h1>
-      <div className='main-container'>
+<h1 className="game-title">THE SNAKE & LADDER GAME</h1>    
+  <div className='main-container'>
         <Board/>
-          
-            {/* <SnakeLadderBoard/> */}
-            
+                      
       </div>
             
   

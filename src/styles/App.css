@@ -14,7 +14,6 @@ html {
     min-height: 100Vh;
     display: flex   ;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
 
     text-align: center;    
@@ -22,4 +21,11 @@ html {
 
 .main-container{
     display: flex;
+}
+.game-title {
+    color: #d32f2f;
+    text-align: center;
+    font-size: clamp(20px, 5vw, 36px); 
+    margin-bottom: 16px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }

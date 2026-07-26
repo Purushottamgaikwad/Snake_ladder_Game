@@ -8,7 +8,7 @@ import dice3 from "../assets/dice-six-faces-three.svg"
 import dice4 from "../assets/dice-six-faces-four.svg"
 import dice5 from "../assets/dice-six-faces-five.svg"
 import dice6 from "../assets/dice-six-faces-six.svg"
-import diceRollSound from "../assets/dice-roll.mp3"; // इतर assets सारखं import kara
+import diceRollSound from "../assets/dice-roll.mp3"; 
 
 function Dice({ onRoll }) {
     const [diceImage, setDiceImage] = useState(null);
@@ -17,14 +17,13 @@ function Dice({ onRoll }) {
     const [dice, setDice] = useState(1);
     const [rolling, setRolling] = useState(false);
 
-    // Audio object एकदाच बनवा, component cha बाहेर किंवा useState/useRef ने
     const [diceSound] = useState(() => new Audio(diceRollSound));
 
     function rollDice() {
         if (rolling) return;
         setRolling(true);
 
-        diceSound.currentTime = 0; // प्रत्येक वेळी सुरुवातीपासून वाजावा
+        diceSound.currentTime = 0; 
         diceSound.play();
 
         let count = 0;
@@ -38,7 +37,7 @@ function Dice({ onRoll }) {
                 setDice(final);
                 setRolling(false);
                 onRoll(final);
-                console.log("Dice :", final);
+                // console.log("Dice :", final);
             }
         }, 100);
     }
