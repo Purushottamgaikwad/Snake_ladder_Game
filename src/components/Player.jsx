@@ -1,9 +1,11 @@
 import { parseCSSVariable } from "framer-motion";
 import { useEffect,useState } from "react";
+import '../styles/player.css'
 
-function Player({ playerPosition ,currentPlayer}) {
+function Player({ board,playerPosition ,currentPlayer}) {
 
-    const [winner, setWinner] = useState(null)
+    const [winner, setWinner] = useState(null);
+
     useEffect(()=>{
         if(playerPosition[0].position === 100){
             setWinner("Player 1 is Winner 👑")
@@ -14,6 +16,8 @@ function Player({ playerPosition ,currentPlayer}) {
 
 
     })
+
+
     
     return (
         <>
@@ -27,6 +31,9 @@ function Player({ playerPosition ,currentPlayer}) {
             </h1>
             
             }
+
+
+
             
         </>
     );

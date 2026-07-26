@@ -1,19 +1,85 @@
-.board-container {
-    width: 500px;
-    aspect-ratio: 1024 / 1024;   /* keeps same proportion as image */
-    background-image: url("D:\project\snake_ladder_game\snake_ladder_game\public\final.jpg");
-    background-size: cover;      /* fills the div */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background: url("/6191052.jpg");
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* width: 500px;
-    height: 500px; */
-    /* border: 2px solid black; */
-  display: grid;
-  grid-template-rows: repeat(10, 1fr);
-  grid-template-columns: repeat(10, 1fr);
-}   
+}
 
-.block{
-    display: none; 
-    border: 1px solid black;
+#root {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.main-container {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    max-width: 100%;
+}
+
+.board-container {
+    position: relative; /* tokens च्या absolute positioning साठी आवश्यक */
+    width: min(90vw, 500px);
+    aspect-ratio: 1;
+    background: url("/final.jpg");
+    background-size: 100% 100%;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    flex-shrink: 0;
+}
+
+.block {
+    font-size: 0; /* board image मध्येच numbers baked-in असल्यास लपवा; नसतील तर खालचा comment काढा */
+    /* font-size: clamp(6px, 1.6vw, 12px); */
+    line-height: 0;
+    user-select: none;
+}
+
+.player-token {
+    position: absolute;
+    width: 8%;   /* % based — board resize झाला तरी proportionate राहतो */
+    height: 8%;
+    transition: left 0.3s ease, top 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.winner-banner {
+    margin-top: 16px;
+    text-align: center;
+    font-size: clamp(18px, 4vw, 28px);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .board-container {
+        width: 95vw;
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 400px) {
+    .board-container {
+        width: 92vw;
+    }
 }
