@@ -1,68 +1,70 @@
-import { parseCSSVariable } from "framer-motion";
-import { useEffect,useState } from "react";
-import winSoundEffect from "../assets/win.mp3"; 
+import { useEffect, useState } from "react";
+import winSoundEffect from "../assets/win.mp3";
+import '../styles/player.css';
 
-import '../styles/player.css'
-
-function Player({ board,playerPosition ,currentPlayer}) {
-
+function Player({ playerPosition, currentPlayer }) {
     const [winner, setWinner] = useState(null);
     const [winSound] = useState(() => new Audio(winSoundEffect));
 
-    useEffect(()=>{
-        if(playerPosition[0].position === 100){
-            setWinner("RED IS WINNER 👑")
-            // console.log(winner)
+    // ★ dependency array add केला — फक्त playerPosition बदलल्यावरच check होईल, प्रत्येक render वर नाही
+    useEffect(() => {
+        if (winner) return; // आधीच winner ठरला असेल तर परत sound वाजवू नका
+
+        if (playerPosition[0].position === 100) {
+            setWinner("RED IS WINNER 👑");
             winSound.play();
-        }else if (playerPosition[1].position === 100) {
-            setWinner("BLUE IS WINNER 👑")
+        } else if (playerPosition[1].position === 100) {
+            setWinner("BLUE IS WINNER 👑");
             winSound.play();
         }
+    }, [playerPosition]);
 
-        
+    // ★ currentPlayer null/undefined असू शकतो (online mode) — safe handling
+    // currentPlayer एकतर index (offline, number) किंवा id (online, string) असू शकतो
+    const currentPlayerObj =
+        currentPlayer === null || currentPlayer === undefined
+            ? null
+            : typeof currentPlayer === "number"
+                ? playerPosition[currentPlayer]           // offline: index ने access
+                : playerPosition.find(p => p.id === currentPlayer); // online: id ने match
 
-    })
-
-
-    
     return (
         <>
-        {winner?<h1 className="winner-banner">{winner}</h1>:
-     <div className="dashboard">
-    <h2 className="dashboard-heading">🎲 Game Dashboard 🎲</h2>
+            {winner ? (
+                <h1 className="winner-banner">{winner}</h1>
+            ) : (
+                <div className="dashboard">
+                    <h2 className="dashboard-heading">🎲 Game Dashboard 🎲</h2>
 
-    <div className="turn-box">
-        Turn of
-        <span
-            className="turn-player"
-            style={{ color: playerPosition[currentPlayer].color }}
-        >
-            {playerPosition[currentPlayer].color}
-        </span>
-    </div>
+                    {currentPlayerObj && (
+                        <div className="turn-box">
+                            Turn of
+                            <span
+                                className="turn-player"
+                                style={{ color: currentPlayerObj.color }}
+                            >
+                                {currentPlayerObj.color}
+                            </span>
+                        </div>
+                    )}
 
-    <div className="score-board">
-        <div className="player-box red-player">
-            <span className="player-name">{playerPosition[0].color}</span>
-            <span className="player-position">
-                Position: {playerPosition[0].position}
-            </span>
-        </div>
+                    <div className="score-board">
+                        <div className="player-box red-player">
+                            <span className="player-name">{playerPosition[0]?.color}</span>
+                            <span className="player-position">
+                                Position: {playerPosition[0]?.position}
+                            </span>
+                        </div>
 
-        <div className="player-box blue-player">
-            <span className="player-name">{playerPosition[1].color}</span>
-            <span className="player-position">
-                Position: {playerPosition[1].position}
-            </span>
-        </div>
-    </div>
-</div>
-            
-            }
-
-
-
-            
+                        <div className="player-box blue-player">
+                            <span className="player-name">{playerPosition[1]?.color}</span>
+                            <span className="player-position">
+                                Position: {playerPosition[1]?.position}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

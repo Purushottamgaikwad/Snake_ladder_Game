@@ -123,7 +123,7 @@ function Board(){
 
     return (
         <>
-                    <Player playerPosition={playerPosition} currentPlayer={currentPlayerIndex} />
+            <Player playerPosition={playerPosition} currentPlayer={currentPlayerIndex} />
 
             <div className='main-container'>
               
