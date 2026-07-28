@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
 import { db, auth } from '../firebase';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import Dice from './Dice.jsx';
@@ -70,42 +70,64 @@ function OnlineBoard({ roomCode }) {
         return () => unsub(); 
     }, [roomCode]);
 
-    async function handleDiceRoll(value) {
-        if (!gameData) return;
+    const lastPositionsRef = useRef(null);
 
-        const { players, currentTurn, winnerId } = gameData;
-        const myId = auth.currentUser.uid;
+useEffect(() => {
+    if (!gameData) return;
 
-        if (currentTurn !== myId || winnerId) return; 
-
-        const me = players.find(p => p.id === myId);
-        let newPosition = me.position + value;
-        if (newPosition > 100) newPosition = me.position;
-
-        let winnerId_new = null;
-
-        if (newPosition === 100) {
-            winnerId_new = myId;
-        } else {
-            if (ladders[newPosition] !== -1) newPosition = ladders[newPosition];
-            else if (snakes[newPosition] !== -1) newPosition = snakes[newPosition];
-        }
-
-        const updatedPlayers = players.map(p =>
-            p.id === myId ? { ...p, position: newPosition } : p
-        );
-
-        const nextPlayer = players.find(p => p.id !== myId);
-
-        await updateDoc(doc(db, "gameRooms", roomCode), {
-            players: updatedPlayers,
-            diceValue: value,
-            currentTurn: nextPlayer.id,
-            ...(winnerId_new && { winnerId: winnerId_new }),
+    if (lastPositionsRef.current) {
+        const moved = gameData.players.some((p, idx) => {
+            const prev = lastPositionsRef.current[idx];
+            return prev && prev.position !== p.position;
         });
 
-        moveSound.currentTime = 0;
-        moveSound.play();
+        if (moved) {
+            moveSound.currentTime = 0;
+            moveSound.play(); 
+        }
+    }
+
+    lastPositionsRef.current = gameData.players;
+}, [gameData]);
+
+async function handleDiceRoll(value) {
+    if (!gameData) return;
+
+    const { players, currentTurn, winnerId } = gameData;
+    const myId = auth.currentUser.uid;
+
+    if (currentTurn !== myId || winnerId) return;
+
+    const me = players.find(p => p.id === myId);
+    let newPosition = me.position + value;
+    if (newPosition > 100) newPosition = me.position;
+
+    let winnerId_new = null;
+
+    if (newPosition === 100) {
+        winnerId_new = myId;
+    } else {
+        if (ladders[newPosition] !== -1) newPosition = ladders[newPosition];
+        else if (snakes[newPosition] !== -1) newPosition = snakes[newPosition];
+    }
+
+    const updatedPlayers = players.map(p =>
+        p.id === myId ? { ...p, position: newPosition } : p
+    );
+
+    const nextPlayer = players.find(p => p.id !== myId);
+
+    await updateDoc(doc(db, "gameRooms", roomCode), {
+        players: updatedPlayers,
+        diceValue: value,
+        currentTurn: nextPlayer.id,
+        lastRollBy: myId,          
+        rollTimestamp: Date.now(), 
+        ...(winnerId_new && { winnerId: winnerId_new }),
+    });
+
+        // moveSound.currentTime = 0;
+        // moveSound.play();
     }
 
     function getCoordinates(position) {
@@ -169,9 +191,16 @@ function OnlineBoard({ roomCode }) {
                 </div>
 
                 <div>
-                    <Dice onRoll={handleDiceRoll} disabled={!isMyTurn || !!winnerId} />
-                    <p>{winnerId ? "" : isMyTurn ? "Your turn" : "Opponent's turn"}</p>
-                </div>
+                    <Dice
+                        onRoll={handleDiceRoll}
+                        disabled={!isMyTurn || !!winnerId}
+                        remoteValue={gameData.diceValue}
+                        remoteRollTimestamp={gameData.rollTimestamp}  
+                    />                    
+                    <p className={`turn-indicator ${isMyTurn ? 'my-turn' : 'opponent-turn'}`}>
+                        {winnerId ? "" : isMyTurn ? "🎲 Your Turn" : "⏳ Opponent's Turn"}
+                    </p>               
+                 </div>
             </div>
 
             {winnerPlayer && (
