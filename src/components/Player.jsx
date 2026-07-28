@@ -6,9 +6,8 @@ function Player({ playerPosition, currentPlayer }) {
     const [winner, setWinner] = useState(null);
     const [winSound] = useState(() => new Audio(winSoundEffect));
 
-    // ★ dependency array add केला — फक्त playerPosition बदलल्यावरच check होईल, प्रत्येक render वर नाही
     useEffect(() => {
-        if (winner) return; // आधीच winner ठरला असेल तर परत sound वाजवू नका
+        if (winner) return;
 
         if (playerPosition[0].position === 100) {
             setWinner("RED IS WINNER 👑");
@@ -19,14 +18,12 @@ function Player({ playerPosition, currentPlayer }) {
         }
     }, [playerPosition]);
 
-    // ★ currentPlayer null/undefined असू शकतो (online mode) — safe handling
-    // currentPlayer एकतर index (offline, number) किंवा id (online, string) असू शकतो
     const currentPlayerObj =
         currentPlayer === null || currentPlayer === undefined
             ? null
             : typeof currentPlayer === "number"
-                ? playerPosition[currentPlayer]           // offline: index ने access
-                : playerPosition.find(p => p.id === currentPlayer); // online: id ने match
+                ? playerPosition[currentPlayer]           
+                : playerPosition.find(p => p.id === currentPlayer); 
 
     return (
         <>

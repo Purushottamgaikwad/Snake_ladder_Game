@@ -18,14 +18,13 @@ snakes[64] = 60; snakes[74] = 53; snakes[92] = 88; snakes[95] = 75; snakes[99] =
 
 function OnlineBoard({ roomCode }) {
     const [board, setBoard] = useState([]);
-    const [gameData, setGameData] = useState(null); // ★ Firestore चा live data — single source of truth
+    const [gameData, setGameData] = useState(null); 
     const [moveSound] = useState(() => new Audio(moveSoundEffect));
     const [winSound] = useState(() => new Audio(winSoundEffect));
     const [winnerAnnounced, setWinnerAnnounced] = useState(false);
 
     const array = Array.from({ length: 100 }, (_, i) => 100 - i);
 
-    // ===== Board layout (zigzag) — सगळ्यांसाठी सेम, local ठीक आहे =====
     function createZigZag(arr) {
         let start = arr.length - 1;
         while (start >= 0) {
@@ -54,7 +53,6 @@ function OnlineBoard({ roomCode }) {
         }
     }, []);
 
-    // ===== ★ Firestore ला real-time ऐका — दोन्ही players इथूनच data घेतात =====
     useEffect(() => {
         if (!roomCode) return;
 
@@ -69,17 +67,16 @@ function OnlineBoard({ roomCode }) {
             }
         });
 
-        return () => unsub(); // component unmount झाल्यावर listener बंद करा
+        return () => unsub(); 
     }, [roomCode]);
 
-    // ===== Dice roll → Firestore update (हेच "write" cha भाग) =====
     async function handleDiceRoll(value) {
         if (!gameData) return;
 
         const { players, currentTurn, winnerId } = gameData;
         const myId = auth.currentUser.uid;
 
-        if (currentTurn !== myId || winnerId) return; // तुमचा turn नसेल किंवा game संपला असेल तर काहीच करू नका
+        if (currentTurn !== myId || winnerId) return; 
 
         const me = players.find(p => p.id === myId);
         let newPosition = me.position + value;
@@ -106,8 +103,6 @@ function OnlineBoard({ roomCode }) {
             currentTurn: nextPlayer.id,
             ...(winnerId_new && { winnerId: winnerId_new }),
         });
-        // ★ हे update झाल्यावर onSnapshot दोन्ही devices वर आपोआप trigger होईल
-        // ★ आणि दोघांच्याही screen वर token हलेल — इथेच "sync" घडतं
 
         moveSound.currentTime = 0;
         moveSound.play();
@@ -122,7 +117,6 @@ function OnlineBoard({ roomCode }) {
         return { left: `${col * 10 + 1}%`, top: `${visualRow * 10 + 1}%` };
     }
 
-    // ===== Loading state — Firestore data अजून आलं नसेल तोपर्यंत =====
     if (!gameData) {
         return <p>Loading game...</p>;
     }
@@ -134,7 +128,6 @@ function OnlineBoard({ roomCode }) {
 
     return (
         <>
-            {/* ★ कोण कोणता रंग आहे ते स्पष्ट दाखवा */}
             <div className="player-legend">
                 {players.map((p) => (
                     <span
@@ -164,7 +157,7 @@ function OnlineBoard({ roomCode }) {
                                 style={{
                                     left: point.left,
                                     top: point.top,
-                                    transform: `translate(${idx * 10}px, 0)`, // overlap टाळायला थोडा offset
+                                    transform: `translate(${idx * 10}px, 0)`, 
                                 }}
                             >
                                 <circle cx="32" cy="18" r="10" fill={player.color} />
